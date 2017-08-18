@@ -1,4 +1,8 @@
 .code16
+/* Floppy header of FAT12 */
+    jmp LABEL_START /* Start to boot */
+    nop             /* nop required */
+
 .text
     mov %cs, %ax
     mov %ax, %ds
