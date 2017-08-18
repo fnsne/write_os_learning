@@ -1,0 +1,46 @@
+.code16
+/* Floppy header of FAT12 */
+    jmp LABEL_START /* Start to boot */
+    nop             /* nop required */
+BS_OEMName: .ascii "WB. YANG" /* OEM String, 8 bytes required */
+BPB_BytsPerSec: .2byte 512 /* Bytes per sector */
+BPB_SecPerCluster: .byte 1 /* Sector per cluster */
+BPB_ResvdSecCnt: .2byte 1 /* Reserved sector count */
+BPB_NumFATs: .byte 2 /* Number of FATs */
+BPB_RootEntCnt: .2byte 224 /* Root entries count */
+BPB_TotSec16: .2byte 2880 /* Total sector number */
+31 BPB_Media: .byte 0xf0 /* Media descriptor */
+32 BPB_FATSz16: .2byte 9 /* FAT size(sectors) */
+33 BPB_SecPerTrk: .2byte 18 /* Sector per track */
+34 BPB_NumHeads: .2byte 2 /* Number of magnetic heads */
+35 BPB_HiddSec: .4byte 0 /* Number of hidden sectors */
+36 BPB_TotSec32: .4byte 0 /* If TotSec16 equal 0, this works */
+37 BS_DrvNum: .byte 0 /* Driver number of interrupt 13 */
+38 BS_Reserved1: .byte 0 /* Reserved */
+39 BS_BootSig: .byte 0x29 /* Boot signal */
+40 BS_VolID: .4byte 0 /* Volume ID */
+41 BS_VolLab: .ascii "Solrex 0.01" /* Volume label, 11 bytes required */
+42 BS_FileSysType: .ascii "FAT12 " /* File system type, 8 bytes required */
+43
+44 /* Initial registers. */
+45 LABEL_START:
+.text
+    mov %cs, %ax
+    mov %ax, %ds
+    mov %ax, %es
+    call DispStr
+    jmp .
+
+DispStr:
+    mov $BootMessage, %ax
+    mov %ax, %bp
+    mov $16, %cx
+    mov $0x1301, %ax
+    mov $0x00c, %bx
+    mov $0 ,%dl
+    int $0x10
+    ret
+
+BootMessage:.ascii "Hello, OS world!"
+.org 510
+.word 0xaa55
